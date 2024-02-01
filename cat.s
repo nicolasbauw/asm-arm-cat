@@ -10,10 +10,23 @@ _start:
     cmp r0,#0           @ Error ? we exit
     blt exit
 
-    mov r1,r0           @ We pass the file we opened to the sendfile system call
+    mov r5,r0           @ we save the file descriptor in r5
+    mov r1,#0           @ offset
+    mov r2,#2           @ SEEK_END
+    mov r7,#0x13        @ "lseek" system call
+    svc #0
+    mov r6,r0           @ we save the file size in r6
+
+    mov r0,r5           @ first argument : the file descriptor (saved in r5)
+    mov r1,#0           @ offset
+    mov r2,#0           @ SEEK_SET
+    mov r7,#0x13        @ "lseek" system call
+    svc #0
+
     mov r0,#1           @ Output to stdout (file descriptor 1)
+    mov r1,r5           @ Input = the FD we opened (saved in r5)
     mov r2,#0           @ offset 0 = start from beginning
-    mov r3,#2048        @ count 2048 = transfer 2048 bytes between the files
+    mov r3,r6           @ count = file size saved in r6 
     mov r7,#0xbb        @ "sendfile" system call
     svc #0
 
