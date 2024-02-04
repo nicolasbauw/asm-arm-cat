@@ -3,5 +3,5 @@ all:
 	ld -g -o cat cat.o
 
 clean:
-	rm cat
+	rm cat cat.o
 
